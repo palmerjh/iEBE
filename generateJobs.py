@@ -113,8 +113,7 @@ for i in range(1, numberOfJobs+1):
     # copy folder
     copytree(ebeNodeFolder, targetWorkingFolder)
     open(path.join(targetWorkingFolder, "job-%d.pbs" % i), "w").write(
-"""
-#!/usr/bin/env bash
+"""#!/usr/bin/env bash
 #PBS -N iEBE-%d
 #PBS -l walltime=%s
 #PBS -j oe
@@ -146,8 +145,7 @@ if compressResultsFolderAnswer == "yes":
     copytree(path.join(ebeNodeFolder, EbeCollectorFolder), path.join(watcherDirectory, ebeNodeFolder, EbeCollectorFolder))
     copytree(utilitiesFolder, path.join(watcherDirectory, utilitiesFolder))
     open(path.join(watcherDirectory, "watcher.pbs"), "w").write(
-"""
-#!/usr/bin/env bash
+"""#!/usr/bin/env bash
 #PBS -N watcher
 #PBS -l walltime=%s
 #PBS -j oe
