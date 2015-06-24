@@ -32,6 +32,8 @@ try:
     else:
         resultsFolder = path.abspath("./RESULTS")
 
+    resultsFolderStore = path.abspath("/store/user/tuos/hydroiEBE/test/RESULTS")
+
     argId += 1
     if len(argv)>=argId+1: # set wall time
         walltime = argv[argId]
@@ -124,8 +126,9 @@ cd %s
     python ./SequentialEventDriver_shell.py %d 1> RunRecord.txt 2> ErrorRecord.txt
     cp RunRecord.txt ErrorRecord.txt ../finalResults/
 )
-mv ./finalResults %s/job-%d
-""" % (i, walltime, targetWorkingFolder, crankFolderName, numberOfEventsPerJob, resultsFolder, i)
+cp -rf ./finalResults %s/job-%d
+rm -rf ./finalResults 
+""" % (i, walltime, targetWorkingFolder, crankFolderName, numberOfEventsPerJob, resultsFolderStore, i)
     )
     if compressResultsFolderAnswer == "yes":
         open(path.join(targetWorkingFolder, "job-%d.pbs" % i), "a").write(
@@ -133,7 +136,7 @@ mv ./finalResults %s/job-%d
 (cd %s
     zip -r -m -q job-%d.zip job-%d
 )
-""" % (resultsFolder, i, i)
+""" % (resultsFolderStore, i, i)
         )
 
 # add a data collector watcher
