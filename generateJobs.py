@@ -143,8 +143,8 @@ cd %s
 
     open(path.join(targetWorkingFolder, "crank/SequentialEventDriver_tmp.py"), "w").write('')
     with open(path.join(targetWorkingFolder, "crank/SequentialEventDriver.py")) as f:
-    for line in f:
-        open(path.join(targetWorkingFolder, "crank/SequentialEventDriver_tmp.py"), "a").write(line )
+        for line in f:
+            open(path.join(targetWorkingFolder, "crank/SequentialEventDriver_tmp.py"), "a").write(line )
 
 # add a data collector watcher
 if compressResultsFolderAnswer == "yes":
