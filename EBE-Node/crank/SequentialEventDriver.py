@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
 # This package performs a sequential calculations of a given number of events,
 # after reading parameters from ParameterDict.py. The most important control
 # parameters are set in controlParameterList, for other parameters see
@@ -10,6 +10,9 @@
 
 from os import path, getcwd, remove, makedirs
 from sys import stdout
+import sys
+sys.path.insert(0, path.abspath('../../../..'))
+from saved_configs import iEbeConfigs
 from shutil import move, copy, rmtree
 from glob import glob
 from subprocess import call
@@ -42,7 +45,7 @@ controlParameterList = {
     'niceness'              :   10,       # range from 0 to 19 for process priority, 0 for the highest priority
     'numberOfEvents'        :   10, # how many sequential calculations
     'rootDir'               :   path.abspath('../'),
-    'resultDir'             :   path.abspath('../finalResults'), # final results will be saved here, absolute
+    'resultDir'             :   path.abspath('placeholder/'), # final results will be saved here, absolute
     'eventResultDirPattern' :   'event-%d', # %d->event_id, where event results are saved
     'eventResultDir'        :   None, # used to pass event result folder from sequentialEventDriverShell to others
     'combinedUrqmdFile'     :   'urqmdCombined.txt', # urqmd from all events will be combined into this file

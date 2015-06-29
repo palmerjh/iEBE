@@ -32,6 +32,7 @@ try:
     else:
         resultsFolder = path.abspath("./RESULTS")
 
+    # CAUTION: Make sure to leave off final backslash
     resultsFolderStore = path.abspath("/store/user/tuos/hydroiEBE/test/RESULTS")
 
     argId += 1
@@ -56,10 +57,11 @@ iEbeConfigs = {
     "number_of_events_per_job"  :   %d,
     "working_folder"            :   "%s",
     "results_folder"            :   "%s",
+    "actual_results_folder"     :   "%s",
     "walltime"                  :   "%s",
     "compress_results_folder"   :   "%s",
 }
-""" % (numberOfJobs, numberOfEventsPerJob, workingFolder, resultsFolder, walltime, compressResultsFolderAnswer)
+""" % (numberOfJobs, numberOfEventsPerJob, workingFolder, resultsFolder, resultsFolderStore, walltime, compressResultsFolderAnswer)
 )
 
 # define colors
@@ -112,6 +114,9 @@ copy(path.join(crankFolder, "ParameterDict.py"), resultsFolder)
 # duplicate EBE-Node folder to working directory, write .pbs file
 for i in range(1, numberOfJobs+1):
     targetWorkingFolder = path.join(workingFolder, "job-%d" % i)
+    targetResultsFolder = path.join(resultsFolderStore, "job-%d" % i)
+    runRecord = path.join(targetResultsFolder, "RunRecord.txt")
+    errorRecord = path.join(targetResultsFolder, "ErrorRecord.txt")
     # copy folder
     copytree(ebeNodeFolder, targetWorkingFolder)
     open(path.join(targetWorkingFolder, "job-%d.pbs" % i), "w").write(
@@ -123,13 +128,10 @@ for i in range(1, numberOfJobs+1):
 cd %s
 (cd %s
     ulimit -n 1000
-    python ./SequentialEventDriver_shell.py %d 1> RunRecord.txt 2> ErrorRecord.txt
-    cp RunRecord.txt ErrorRecord.txt ../finalResults/
+    python ./SequentialEventDriver_shell.py %s %d 1> %s 2> %s
 )
-cp -rf ./finalResults %s/job-%d
-rm -rf ./finalResults 
-""" % (i, walltime, targetWorkingFolder, crankFolderName, numberOfEventsPerJob, resultsFolderStore, i)
-    )
+""" % (i, walltime, targetWorkingFolder, crankFolderName, targetResultsFolder, numberOfEventsPerJob, runRecord, errorRecord))
+
     if compressResultsFolderAnswer == "yes":
         open(path.join(targetWorkingFolder, "job-%d.pbs" % i), "a").write(
 """
@@ -138,6 +140,11 @@ rm -rf ./finalResults
 )
 """ % (resultsFolderStore, i, i)
         )
+
+    open(path.join(targetWorkingFolder, "crank/SequentialEventDriver_tmp.py"), "w").write('')
+    with open(path.join(targetWorkingFolder, "crank/SequentialEventDriver.py")) as f:
+    for line in f:
+        open(path.join(targetWorkingFolder, "crank/SequentialEventDriver_tmp.py"), "a").write(line )
 
 # add a data collector watcher
 if compressResultsFolderAnswer == "yes":
