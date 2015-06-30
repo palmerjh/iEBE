@@ -4,7 +4,7 @@ controlParameterList = {
 }
 
 centralityParameters = {
-    'centrality': '20-30%',  # centrality bin
+    'centrality': '90-95%',  # centrality bin
     'cut_type': 'total_entropy',
     # centrality cut variable: total_entropy or Npart
 }

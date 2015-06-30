@@ -6,7 +6,7 @@
 
 from sys import argv
 from os import path, listdir
-
+'''
 # check for existing saved_configs.py file
 if path.exists("saved_configs.py"):
     # use saved config file
@@ -18,12 +18,16 @@ else:
         targetWorkingDirectory = path.abspath(argv[1])
     else:
         targetWorkingDirectory = "PlayGround"
+'''
+import saved_configs
+resultsDir = saved_configs.iEbeConfigs["actual_results_folder"]
 
 from subprocess import call
 
-print("Checking progress of events in %s:" % targetWorkingDirectory)
-for aFolder in listdir(targetWorkingDirectory):
-    subFolder = path.join(targetWorkingDirectory, aFolder, "crank")
+#print("Checking progress of events in %s:" % targetWorkingDirectory)
+print("Checking progress of events in %s:" % resultsDir)
+for aFolder in listdir(resultsDir):
+    subFolder = path.join(resultsDir, aFolder)
     recordFile = path.join(subFolder, "RunRecord.txt")
     if not path.exists(recordFile): continue # looking at the wrong subdirectory
     print("For %s:" % aFolder)

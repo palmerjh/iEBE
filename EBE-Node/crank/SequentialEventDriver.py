@@ -10,9 +10,6 @@
 
 from os import path, getcwd, remove, makedirs
 from sys import stdout
-import sys
-sys.path.insert(0, path.abspath('../../../..'))
-from saved_configs import iEbeConfigs
 from shutil import move, copy, rmtree
 from glob import glob
 from subprocess import call
@@ -633,10 +630,9 @@ def sequentialEventDriverShell():
         readInParameters()
         translate_centrality_cut()
 
-        # create result folder
+        # create result folder if necessary
         resultDir = controlParameterList['resultDir']
-        if path.exists(resultDir):
-            rmtree(resultDir)
+        if not path.exists(resultDir):
             makedirs(resultDir)
 
         # get simulation type

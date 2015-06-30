@@ -2,7 +2,7 @@
 
 from sys import argv, exit
 try:
-	resultsFolder = argv[1]
+    resultsFolder = argv[1]
     numberOfEvents = int(argv[2])
 except:
     print("Usage: SequentialEventDriver_shell.py results_folder_for_job number_of_events")

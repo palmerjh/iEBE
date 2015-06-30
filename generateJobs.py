@@ -33,7 +33,8 @@ try:
         resultsFolder = path.abspath("./RESULTS")
 
     # CAUTION: Make sure to leave off final backslash
-    resultsFolderStore = path.abspath("/store/user/tuos/hydroiEBE/test/RESULTS")
+    resultsFolderStore = path.abspath("/store/user/palmerjh/Results")
+    #resultsFolderStore = path.abspath("../iEBE_Results")
 
     argId += 1
     if len(argv)>=argId+1: # set wall time
@@ -45,7 +46,7 @@ try:
     if len(argv)>=argId+1: # whether to compress final results folder
         compressResultsFolderAnswer = argv[argId]
     else:
-        compressResultsFolderAnswer = "yes"
+        compressResultsFolderAnswer = "no"
 except:
     print('Usage: generateJobs.py number_of_jobs number_of_events_per_job [working_folder="./PlayGround"] [results_folder="./RESULTS"] [walltime="03:00:00" (per event)] [compress_results_folder="yes"]')
     exit()
@@ -116,7 +117,16 @@ for i in range(1, numberOfJobs+1):
     targetWorkingFolder = path.join(workingFolder, "job-%d" % i)
     targetResultsFolder = path.join(resultsFolderStore, "job-%d" % i)
     runRecord = path.join(targetResultsFolder, "RunRecord.txt")
+    #runRecord = "RunRecord.txt"
     errorRecord = path.join(targetResultsFolder, "ErrorRecord.txt")
+    #errorRecord = "ErrorRecord.txt"
+    
+    if path.exists(targetResultsFolder):
+        rmtree(targetResultsFolder)
+    print("DEBUG: about to make results dir")
+    makedirs(targetResultsFolder)
+    print("DEBUG: made results dir")
+
     # copy folder
     copytree(ebeNodeFolder, targetWorkingFolder)
     open(path.join(targetWorkingFolder, "job-%d.pbs" % i), "w").write(

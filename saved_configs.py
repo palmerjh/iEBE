@@ -1,9 +1,10 @@
 
 iEbeConfigs = {
-    "number_of_jobs"            :   1,
+    "number_of_jobs"            :   2,
     "number_of_events_per_job"  :   2,
-    "working_folder"            :   "/Users/Chun/Desktop/iebe/PlayGround",
-    "results_folder"            :   "/Users/Chun/Desktop/iebe/RESULTS",
+    "working_folder"            :   "/gpfs21/scratch/palmerjh/iEBE/PlayGround",
+    "results_folder"            :   "/gpfs21/scratch/palmerjh/iEBE/RESULTS",
+    "actual_results_folder"     :   "/store/user/palmerjh/Results",
     "walltime"                  :   "6:00:00",
-    "compress_results_folder"   :   "yes",
+    "compress_results_folder"   :   "no",
 }
