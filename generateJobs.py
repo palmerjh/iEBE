@@ -6,7 +6,7 @@
 """
 
 from sys import argv, exit
-from os import makedirs, path, unlink
+from os import getcwd, makedirs, path, unlink
 from shutil import copytree, copy, rmtree
 
 from check_prerequisites import checkEnvironment, checkExecutables, greetings
@@ -35,6 +35,9 @@ try:
     # CAUTION: Make sure to leave off final backslash
     resultsFolderStore = path.abspath("/store/user/palmerjh/Results")
     #resultsFolderStore = path.abspath("../iEBE_Results")
+
+    # where TTree will be created; NOTE: must have access to CMS environment here
+    treeResultsStore = path.abspath("/home/palmerjh/CMSSW_7_5_0_pre5/src")
 
     argId += 1
     if len(argv)>=argId+1: # set wall time
@@ -137,7 +140,7 @@ for i in range(1, numberOfJobs+1):
 #PBS -S /bin/bash
 cd %s
 (cd %s
-    ulimit -n 1000
+    ulimit -n 100000
     python ./SequentialEventDriver_shell.py %s %d 1> %s 2> %s
 )
 """ % (i, walltime, targetWorkingFolder, crankFolderName, targetResultsFolder, numberOfEventsPerJob, runRecord, errorRecord))
@@ -177,6 +180,39 @@ cd %s
 )
 """ % (walltime, watcherDirectory, utilitiesFolder, resultsFolder, numberOfJobs, resultsFolder)
     )
+
+# add a data extractor to be used in flow calculations
+nHours = int(numberOfEventsPerJob / 60)
+nMinutes = numberOfEventsPerJob % 60
+
+if nMinutes < 10:
+    extractionTime = "0-0%d:0%d:00" % (nHours, nMinutes)
+else:
+    extractionTime = "0-0%d:%d:00" % (nHours, nMinutes)
+
+open(path.join(getcwd(), "iEBE_extraction.slurm"), "w").write(
+    """#!/usr/bin/env bash
+#SBATCH --ntasks=1
+#SBATCH --time=%s
+#SBATCH --array=1-%d
+
+JOB=$SLURM_ARRAY_TASK_ID
+
+(python ./utilities/readUrQMD.py %s/job-${JOB} &> %s/job-${JOB}/readUrQMD.log)
+
+cp ./utilities/makeTree.C %s
+cd %s
+
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+export SCRAM_ARCH=slc6_amd64_gcc472
+eval `scramv1 runtime -sh`
+
+root -q -b "makeTree.C("%s/job-${JOB}/extractedData.dat")" &> tree_creation_${JOB}.log
+
+exit 0
+
+""" % (extractionTime, numberOfJobs, resultsFolderStore, resultsFolderStore, treeResultsStore, treeResultsStore, resultsFolderStore)
+)
 
 print("Jobs generated. Submit them using submitJobs scripts.")
 
