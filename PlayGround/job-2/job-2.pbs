@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#PBS -N iEBE-2
+#PBS -l walltime=6:00:00
+#PBS -j oe
+#PBS -S /bin/bash
+cd /gpfs21/scratch/palmerjh/iEBE/PlayGround/job-2
+(cd crank
+    ulimit -n 100000
+    python ./SequentialEventDriver_shell.py /store/user/palmerjh/Results/job-2 2 1> /store/user/palmerjh/Results/job-2/RunRecord.txt 2> /store/user/palmerjh/Results/job-2/ErrorRecord.txt
+)
