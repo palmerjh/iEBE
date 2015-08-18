@@ -26,20 +26,26 @@ read_mode = "header_first_part"
 header_count = 1 # the first read line is already part of the header line
 data_row_count = 0
 nParticles = 0 # not the same as data_row_count; excludes particles not in rap_range
+lineCount = 0
 
 eventID = 0
 for aLine in open(UrQMDoutputFilePath):
+    lineCount += 1
     if read_mode=="header_first_part":
         if header_count <= 14: # skip first 14 lines
             header_count += 1
             continue
         # now at 15th line
         assert header_count==15, "No no no... Stop here."
+        data_row_count = int(aLine.split()[0])
+        '''
         try:
             data_row_count = int(aLine.split()[0])
+
         except ValueError as e:
             print("The file "+ UrQMDoutputFilePath +" does not have a valid urqmd output file header!")
             exit(e)
+        '''
         read_mode = "header_second_part"
     elif read_mode=="header_second_part":
         # skip current line by switching to data reading mode
@@ -49,7 +55,7 @@ for aLine in open(UrQMDoutputFilePath):
             # still have data to read
             try:
                 p0, px, py, pz = map(lambda x: float(x), aLine[65:128].split())
-                pid = int(aLine[151:157])
+                pid = int(aLine[151:156])
                 rap = 0.5*math.log((p0 + pz)/(p0 - pz))
                 if rap < rap_range[1] and rap > rap_range[0]:
                     pT = math.sqrt(px*px + py*py)
@@ -65,7 +71,7 @@ for aLine in open(UrQMDoutputFilePath):
                     nParticles += 1
 
             except ValueError as e:
-                print("The file "+ UrQMDoutputFilePath +" does not have valid urqmd data!")
+                print("The file %s does not have valid urqmd data at line %d!" % (UrQMDoutputFilePath, lineCount))
                 exit(e)
             data_row_count -= 1
         if data_row_count == 1: # note: not 0, but 1
